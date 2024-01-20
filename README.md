@@ -9,12 +9,12 @@ The different implementations will change and the projects are very basic as the
 
 ## Projects
 
-1. socket-chat
+### socket-chat
 The goal here was to test the implementation of the `:accumulative_state` servers channels. These are channels that have state accumulated relative to the user connected to the socket.
 
 Note: Because the wsserver project doesnt allow creating channels from a client side, the rooms need to be made by who ever made the server for them to be visible on the client.
 
-2. socket-draw (WIP)
+### socket-draw (WIP)
 This will be testing the implementaiton of the `:collaborative_state` &  `:shared_state` - these are generally states on the room that will keep user data updated per user data changes along with a global state that can be initalized and updated by the connected agents. 
 
 ## Notes
