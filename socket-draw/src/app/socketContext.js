@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Socket } from "phoenix";
 
-const SERVER_ID = "d75b3ec0-fdb3-46db-995b-51a329cd6151"
+const SERVER_ID = "dcee8398-cc5e-4f5e-8494-ecd513ffa387"
 
 // Create the context
 // TODO: Types need to be updated
@@ -67,7 +67,7 @@ export const SocketProvider = ({ children }) => {
 
     return () => {
       lobby.leave();
-      socket.disconnect();
+      // socket.disconnect();
     };
   }, []);
 

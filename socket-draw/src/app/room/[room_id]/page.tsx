@@ -6,14 +6,17 @@ import { lobby_navigate } from "../../navigator";
 export default function Room(input: any) {
   const { params } = input;
   const { currSocket } = useSocket();
-  const [currChannel, setChannel] = useState<Channel>();
-  const [messages, setMessages] = useState<Record<string, any>>({});
-  const [isConnected, setConnected] = useState(false);
+  const [currStateChannel, setStateChannel] = useState<Channel>();
+  const [currDrawChannel, setDrawChannel] = useState<Channel>();
+  const [canvasState, setCanvasState] = useState<Record<string, any>>({});
+  const [_isConnectedState, setConnectedState] = useState(false);
+  const [isConnectedDraw, setConnectedDraw] = useState(false);
   const [lastPoint, setLastPoint] = useState(null);
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
   const [color, setColor] = useState("#000000");
 
+  // the starting point before makng a stroke
   const startDrawing = ({ nativeEvent }: { nativeEvent: MouseEvent }) => {
     console.log("Start Drawing");
     const { offsetX, offsetY } = nativeEvent;
@@ -24,6 +27,7 @@ export default function Room(input: any) {
     setLastPoint({ x: offsetX, y: offsetY });
   };
 
+  // the drawing the BUSY drawing
   const draw = ({ nativeEvent }: { nativeEvent: MouseEvent }) => {
     if (!isDrawing || !canvasRef.current) return;
 
@@ -37,8 +41,8 @@ export default function Room(input: any) {
       context.lineTo(offsetX, offsetY);
       context.stroke();
 
-      if (currChannel) {
-        currChannel.push("push", {
+      if (currDrawChannel) {
+        currDrawChannel.push("push", {
           startX: lastPoint.x,
           startY: lastPoint.y,
           endX: offsetX,
@@ -51,11 +55,19 @@ export default function Room(input: any) {
     setLastPoint({ x: offsetX, y: offsetY });
   };
 
+  // the drawing ending function
   const endDrawing = () => {
     console.log("Stop Drawing");
     if (!canvasRef.current) return;
     const context = canvasRef.current.getContext("2d");
     context.closePath();
+
+    if (currStateChannel) {
+      const img_data = canvasRef.current.toDataURL("image/jpeg");
+      currStateChannel.push("push", {
+        data: img_data,
+      });
+    }
     setIsDrawing(false);
   };
 
@@ -71,47 +83,75 @@ export default function Room(input: any) {
     context.fillRect(0, 0, canvas.width, canvas.height);
   }, [canvasRef.current]);
 
+  // channel joins and connection
   useEffect(() => {
-    console.log("channel connection");
     if (!currSocket) return;
+    console.log("channel connection");
     const drawChannel = currSocket.channel(params?.room_id);
-    drawChannel
+    const canvasStateChannel = currSocket.channel(`${params?.room_id}_canvas`);
+
+    canvasStateChannel
       .join()
       .receive("ok", (resp: any) => {
-        setConnected(true);
+        setConnectedState(true);
       })
       .receive("error", () => {
         console.log("Unable to join");
-        setConnected(false);
+        setConnectedState(false);
       });
 
-    drawChannel.on("msg", (resp: any) => {
+    // the messages or events from other clients
+    canvasStateChannel.on("msg", ({ data: resp }: any) => {
       if (!canvasRef.current) return;
-      const context = canvasRef.current.getContext("2d");
-
-      const { startX, startY, endX, endY, color } = resp.data.state;
-      console.log("resp.data")
-      console.log(resp.data)
-      context.beginPath();
-      context.strokeStyle = color;
-      context.moveTo(startX, startY);
-      context.lineTo(endX, endY);
-      context.stroke();
-      context.closePath();
+      setCanvasState(resp.state.data);
     });
 
-    drawChannel.on("state", (resp: any) => {
-      setMessages((prevMessages) => ({
-        ...prevMessages,
-        ...resp.data.state,
-      }));
+    // init state for the canvas data
+    canvasStateChannel.on("state", ({ data: resp }: any) => {
+      setCanvasState(resp.state.data);
     });
 
-    // set the channel to make it avail in the component
-    setChannel(drawChannel);
+    drawChannel
+      .join()
+      .receive("ok", (resp: any) => {
+        setConnectedDraw(true);
+      })
+      .receive("error", () => {
+        console.log("Unable to join");
+        setConnectedDraw(false);
+      });
+
+      // the live events data from other users
+      drawChannel.on("msg", (resp: any) => {
+        if (!canvasRef.current) return;
+        const context = canvasRef.current.getContext("2d");
+        const { startX, startY, endX, endY, color } = resp.data.state;
+
+        context.beginPath();
+        context.strokeStyle = color;
+        context.moveTo(startX, startY);
+        context.lineTo(endX, endY);
+        context.stroke();
+        context.closePath();
+      });
+
+      setStateChannel(canvasStateChannel);
+      setDrawChannel(drawChannel);
   }, [currSocket, params?.room_id]);
 
-  if (!isConnected) {
+  // take the init state to init the canvas
+  useEffect(() => {
+    if (!canvasRef.current) return;
+    const context = canvasRef.current.getContext("2d");
+    const image: any = new Image();
+
+    image.onload = function () {
+      context.drawImage(image, 0, 0);
+    };
+    image.src = canvasState;
+  }, [canvasState]);
+
+  if (!isConnectedDraw) {
     return (
       <div
         style={{
