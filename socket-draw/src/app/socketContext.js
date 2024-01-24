@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Socket } from "phoenix";
 
-const SERVER_ID = "f902007a-9962-4cb6-818a-7da69461047e"
+const SERVER_ID = "d75b3ec0-fdb3-46db-995b-51a329cd6151"
 
 // Create the context
 // TODO: Types need to be updated

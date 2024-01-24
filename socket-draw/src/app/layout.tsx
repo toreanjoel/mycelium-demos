@@ -6,8 +6,8 @@ import './globals.css'
 const inter = Inter({ subsets: [] })
 
 export const metadata: Metadata = {
-  title: 'wsserve - socket-draw',
-  description: 'Example draw app made to test shared state servers in wsserve',
+  title: 'mycelium - socket-draw',
+  description: 'Example draw app made to test shared state servers in mycelium',
 }
 
 export default function RootLayout({

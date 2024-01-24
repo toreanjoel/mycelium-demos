@@ -103,7 +103,7 @@ export default function Room(input) {
       >
         <div style={{ flex: 1 }}></div>
         <div
-          style={{ padding: "0 10px", paddingBottom: 10, marginTop: 50, overflow: "scroll" }}
+          style={{ padding: "0 10px", paddingBottom: 10, marginTop: 50, overflowY: "auto" }}
         >
           {Object.keys(messages).map((item) => {
             const { payload, user } = messages[item];

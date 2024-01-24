@@ -16,7 +16,7 @@ export default function Page() {
       }}
     >
       <div style={{ flex: 1 }} />
-      <div style={{ fontSize: "1.5em", padding: 10 }}>wsserve - rooms</div>
+      <div style={{ fontSize: "1.5em", padding: 10 }}>mycelium - Chat Rooms</div>
       {roomLen < 1 && <div style={{ textAlign: "center", padding: 10}}>No rooms found</div>}
       <div
         style={{
@@ -24,7 +24,8 @@ export default function Page() {
           width: "100%",
           maxWidth: 600,
           maxHeight: 200,
-          overflow: "scroll",
+          overflowY: "auto",
+          margin: "10px 0",
         }}
       >
         {getRooms().map((item: string) => {

@@ -3,11 +3,11 @@ import { Inter } from 'next/font/google'
 import { SocketProvider } from './socketContext';
 import './globals.css'
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: [] })
 
 export const metadata: Metadata = {
-  title: 'wsserve - socket-chat',
-  description: 'Example chat app made to test accumulative state servers in wsserve',
+  title: 'mycelium - socket-chat',
+  description: 'Example chat app made to test accumulative state servers in mycelium',
 }
 
 export default function RootLayout({

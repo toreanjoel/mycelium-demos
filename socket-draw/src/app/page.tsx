@@ -16,7 +16,7 @@ export default function Page() {
       }}
     >
       <div style={{ flex: 1 }} />
-      <div style={{ fontSize: "1.5em", padding: 10 }}>wsserve - Draw Rooms</div>
+      <div style={{ fontSize: "1.5em", padding: 10 }}>mycelium - Draw Rooms</div>
       {roomLen < 1 && <div style={{ textAlign: "center", padding: 10}}>No rooms found</div>}
       <div
         style={{
