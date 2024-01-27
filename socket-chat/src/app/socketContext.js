@@ -2,7 +2,7 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { Socket } from "phoenix";
 
-const SERVER_ID = "d95d9d6f-5aec-42a0-96f3-9184826604bb"
+const SERVER_ID = "951e6049-6828-4dbe-8dd3-0ede9ec0476a"
 
 // Create the context
 // TODO: Types need to be updated
@@ -53,7 +53,7 @@ export const SocketProvider = ({ children }) => {
       .receive("ok", (data) => {
         // Get available rooms
         setChannel(lobby)
-        lobby.on("available_rooms", ({ data: rooms }) => {
+        lobby.on("rooms", ({ data: rooms }) => {
           setRooms(rooms)
         })
         console.log("Successfully joined lobby channel");

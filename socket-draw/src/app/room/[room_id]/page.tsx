@@ -88,7 +88,7 @@ export default function Room(input: any) {
     if (!currSocket) return;
     console.log("channel connection");
     const drawChannel = currSocket.channel(params?.room_id);
-    const canvasStateChannel = currSocket.channel(`${params?.room_id}_canvas`);
+    const canvasStateChannel = currSocket.channel(`${params?.room_id}_state`);
 
     canvasStateChannel
       .join()
